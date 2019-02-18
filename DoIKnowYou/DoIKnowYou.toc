@@ -1,0 +1,25 @@
+﻿## Title: DoIKnowYou
+## Title-ruRU: АЯТебяЗнаю
+## Notes: Note + rep tracking for players, with guild data sharing.
+## Notes-ruRU: Заметки и отслеживание репутации (кармы) игроков, с разделением данных внутри гильдии.
+## Author: Shot
+## X-eMail: shotmonkey@gmail.com
+
+## Interface: 20400
+## Version: 1.0
+
+## X-Website: http://www.wowace.com/wiki/DoIKnowYou
+## X-Category: Interface Enhancements
+
+## SavedVariables: DoIKnowYouDB
+## OptionalDeps: Ace3
+## X-Embeds: Ace3
+
+embeds.xml
+Locales.xml
+
+DoIKnowYou.lua
+
+Frame.xml
+Console.xml
+Dataview.xml

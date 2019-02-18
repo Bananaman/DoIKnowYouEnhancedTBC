@@ -1,0 +1,640 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+	
+	<Frame name="DoIKnowYouDataview_RowTemplate" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self:SetBackdropBorderColor(0,0,0,0.1);
+				self:SetBackdropColor(0,0,0,0.5);
+			</OnLoad>
+		</Scripts>
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<TileSize>
+				<AbsValue val="32" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16" />
+			</EdgeSize>
+			<BackgroundInsets>
+				<AbsInset left="3" right="3" top="3" bottom="3" />
+			</BackgroundInsets>
+		</Backdrop>
+			
+		<Size>
+			<AbsDimension x="500" y="24" />
+		</Size>
+		
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset x="10" y="-30" />
+			</Anchor>
+		</Anchors>
+		
+		<Frames>
+		
+			<Button name="$parent_QueryButton" inherits="GameMenuButtonTemplate" text="?">
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="RIGHT">
+						<Offset x="5" y="0" />
+					</Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="30" y="24"/>
+				</Size>
+				<Scripts>
+					<OnClick>
+						DoIKnowYou:QueryFromDataview(strsub(getglobal(this:GetParent():GetName() .. "_NameText"):GetText(), 11))
+					</OnClick>
+				</Scripts>
+			</Button>
+			
+			<Button name="$parent_DeleteButton" inherits="GameMenuButtonTemplate" text="X">
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="RIGHT">
+						<Offset x="40" y="0" />
+					</Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="30" y="24"/>
+				</Size>
+				<Scripts>
+					<OnClick>
+						DoIKnowYou:removeSummary(strsub(getglobal(this:GetParent():GetName() .. "_NameText"):GetText(), 11))
+					</OnClick>
+				</Scripts>
+			</Button>
+						
+		</Frames>
+		
+		<Layers>
+			<Layer level="ARTWORK">
+				
+				<FontString name="$parent_NameText" inherits="GameFontNormal" text="|cff00ff00Testname">			
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset x="5" y="7" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="12" />
+					</FontHeight>
+				</FontString>
+				
+				<FontString name="$parent_NoteText" inherits="GameFontNormal" text="|cff00ff00Great justice, take off every zig. All your ..">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset x="130" y="7" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="10" />
+					</FontHeight>
+				</FontString>
+						
+				<FontString name="$parent_RepData" inherits="GameFontNormal" text="|cff00ff00+6">			
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="BOTTOMRIGHT">
+							<Offset x="-100" y="7" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="10" />
+					</FontHeight>
+				</FontString>
+				
+				<FontString name="$parent_TotalData" inherits="GameFontNormal" text="|cff00ff00+6">			
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="BOTTOMRIGHT">
+							<Offset x="-75" y="7" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="10" />
+					</FontHeight>
+				</FontString>
+				
+				<FontString name="$parent_SourceData" inherits="GameFontNormal" text="8">			
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="BOTTOMRIGHT">
+							<Offset x="-50" y="7" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="10" />
+					</FontHeight>
+				</FontString>
+				
+				<FontString name="$parent_NoteData" inherits="GameFontNormal" text="3">			
+					<Anchors>
+								<Anchor point="BOTTOM" relativePoint="BOTTOMRIGHT">
+							<Offset x="-25" y="7" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="10" />
+					</FontHeight>
+				</FontString>
+				
+			</Layer>
+		</Layers>
+		
+	</Frame>
+	
+	<Frame name="DoIKnowYouDataview" enableMouse="true" movable="true" resizable="false" clampedtoscreen="true" parent="UIParent" hidden="true" frameStrata="DIALOG">
+	
+		<Scripts>
+		<OnLoad>
+			self:SetBackdropBorderColor(0,0,0,1);
+			self:SetBackdropColor(0,0,0,1);
+		</OnLoad>
+		<OnMouseUp>
+			if ( this.isMoving ) then
+				self:StopMovingOrSizing();
+				this.isMoving = false;
+			end
+		</OnMouseUp>
+		<OnMouseDown>
+			if ( ( ( not this.isLocked ) or ( this.isLocked == 0 ) ) and ( arg1 == "LeftButton" ) ) then
+				self:StartMoving();
+				this.isMoving = true;
+			end
+		</OnMouseDown>
+		<OnHide>
+			if ( this.isMoving ) then
+				self:StopMovingOrSizing();
+				this.isMoving = false;
+			end
+		</OnHide>
+		</Scripts>
+		
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<TileSize>
+				<AbsValue val="32" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16" />
+			</EdgeSize>
+			<BackgroundInsets>
+				<AbsInset left="3" right="3" top="3" bottom="3" />
+			</BackgroundInsets>
+		</Backdrop>
+			
+		<Size>
+			<AbsDimension x="600" y="430"></AbsDimension>
+		</Size>
+		
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		
+		<Frames>
+		
+			<Button name="$parent_CloseButton" inherits="UIPanelCloseButton">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-3" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick> self:GetParent():Hide();</OnClick>
+				</Scripts>
+			</Button>
+			
+			<CheckButton name="$parent_FilterMode" inherits="OptionsCheckButtonTemplate">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<HitRectInsets>
+					<AbsInset left="-5" right="-50" top="0" bottom="0"/>
+				</HitRectInsets>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="20" y="35" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				
+				<Scripts>
+					<OnLoad>
+						this:SetChecked(true)
+						getglobal(this:GetName() .. "Text"):SetFontObject("GameFontNormal")
+						getglobal(this:GetName() .. "Text"):SetTextColor(1, 1, 1)
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			
+			<EditBox name="$parent_NameFilter" letters="80" autoFocus="false" inherits="InputBoxTemplate">
+				<Size>
+					<AbsDimension x="130" y="32"></AbsDimension>
+				</Size>
+				<Scripts>
+					<OnEditFocusLost>
+						DoIKnowYou:filterData()
+					</OnEditFocusLost>
+					<OnEscapePressed>
+						self:ClearFocus();
+					</OnEscapePressed>
+					<OnEnterPressed>
+						self:ClearFocus()
+					</OnEnterPressed>
+				</Scripts>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="20" y="10" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<FontString inherits="ChatFontNormal" />
+				
+			</EditBox>
+			<EditBox name="$parent_NoteFilter" letters="80" autoFocus="false" inherits="InputBoxTemplate">
+				<Size>
+					<AbsDimension x="200" y="32"></AbsDimension>
+				</Size>
+				<Scripts>
+					<OnEditFocusLost>
+						DoIKnowYou:filterData()
+					</OnEditFocusLost>
+					<OnEscapePressed>
+						self:ClearFocus();
+					</OnEscapePressed>
+					<OnEnterPressed>
+						self:ClearFocus()
+					</OnEnterPressed>
+				</Scripts>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_NameFilter" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<FontString inherits="ChatFontNormal" />
+				
+			</EditBox>
+			
+			<CheckButton name="$parent_PositiveRepFilter" inherits="OptionsCheckButtonTemplate">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<HitRectInsets>
+					<AbsInset left="-5" right="-15" top="0" bottom="0"/>
+				</HitRectInsets>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_NoteFilter" relativePoint="RIGHT" >
+						<Offset>
+							<AbsDimension x="20" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontNormal" text="+">
+							<Anchors>
+								<Anchor point="LEFT">
+									<Offset>
+										<AbsDimension x="25" y="1" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						this:SetChecked(true)
+					</OnLoad>
+					<OnClick>
+						DoIKnowYou:filterData()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_NeutralRepFilter" inherits="OptionsCheckButtonTemplate">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<HitRectInsets>
+					<AbsInset left="-5" right="-15" top="0" bottom="0"/>
+				</HitRectInsets>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_NoteFilter" relativePoint="RIGHT" >
+						<Offset>
+							<AbsDimension x="60" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontNormal" text="o">
+							<Anchors>
+								<Anchor point="LEFT">
+									<Offset>
+										<AbsDimension x="25" y="1" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						this:SetChecked(true)
+					</OnLoad>
+					<OnClick>
+						DoIKnowYou:filterData()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_NegativeRepFilter" inherits="OptionsCheckButtonTemplate">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<HitRectInsets>
+					<AbsInset left="-5" right="-15" top="0" bottom="0"/>
+				</HitRectInsets>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_NoteFilter" relativePoint="RIGHT" >
+						<Offset>
+							<AbsDimension x="100" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontNormal" text="-">
+							<Anchors>
+								<Anchor point="LEFT">
+									<Offset>
+										<AbsDimension x="25" y="1" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						this:SetChecked(true)
+					</OnLoad>
+					<OnClick>
+						DoIKnowYou:filterData()
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			
+			<Button name="$parent_SummaryButton" inherits="GameMenuButtonTemplate" text="Summary Data">
+				<Scripts>
+					<OnClick>
+						DoIKnowYou:updateSummaryDisplay()
+					</OnClick>
+				</Scripts>
+				<Anchors>
+					<Anchor point="LEFT"  relativeTo="$parent_NoteFilter" relativePoint="RIGHT">
+						<Offset x="30" y="24" />
+					</Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="120" y="24"/>
+				</Size>
+			</Button>
+			<Button name="$parent_ClearButton" inherits="GameMenuButtonTemplate" text="Reset">
+				<Scripts>
+					<OnClick>
+						DoIKnowYouDataview_NameFilter:SetText("")
+						DoIKnowYouDataview_NoteFilter:SetText("")
+						DoIKnowYouDataview_PositiveRepFilter:SetChecked(true)
+						DoIKnowYouDataview_NeutralRepFilter:SetChecked(true)
+						DoIKnowYouDataview_NegativeRepFilter:SetChecked(true)
+						DoIKnowYou:filterData()
+					</OnClick>
+				</Scripts>
+				<Anchors>
+					<Anchor point="LEFT"  relativeTo="$parent_NoteFilter" relativePoint="RIGHT">
+						<Offset x="150" y="24" />
+					</Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="70" y="24"/>
+				</Size>
+			</Button>
+			<Button name="$parent_FilterButton" inherits="GameMenuButtonTemplate" text="Filter">
+				<Scripts>
+					<OnClick>
+						DoIKnowYou:filterData();
+					</OnClick>
+				</Scripts>
+				<Anchors>
+					<Anchor point="LEFT"  relativeTo="$parent_NoteFilter" relativePoint="RIGHT">
+						<Offset x="150" y="0" />
+					</Anchor>
+				</Anchors>
+				<Size>
+					<AbsDimension x="70" y="24"/>
+				</Size>
+			</Button>
+			
+			<Button name="$parent_PrevPage">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-110" y="70" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						DoIKnowYou:summaryPageDown()
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down"/>
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled"/>
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+			</Button>
+			<Button name="$parent_NextPage">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-85" y="70" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						DoIKnowYou:summaryPageUp()
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled"/>
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+			</Button>
+			
+			
+			<Frame name="$parent_DataRow1" inherits="DoIKnowYouDataview_RowTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="10" y="-50" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_DataRow2" inherits="DoIKnowYouDataview_RowTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DataRow1" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-0" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_DataRow3" inherits="DoIKnowYouDataview_RowTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DataRow2" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-0" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_DataRow4" inherits="DoIKnowYouDataview_RowTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DataRow3" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-0" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_DataRow5" inherits="DoIKnowYouDataview_RowTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DataRow4" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-0" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_DataRow6" inherits="DoIKnowYouDataview_RowTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DataRow5" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-0" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_DataRow7" inherits="DoIKnowYouDataview_RowTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DataRow6" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-0" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_DataRow8" inherits="DoIKnowYouDataview_RowTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DataRow7" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-0" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_DataRow9" inherits="DoIKnowYouDataview_RowTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DataRow8" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-0" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_DataRow10" inherits="DoIKnowYouDataview_RowTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DataRow9" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-0" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_DataRow11" inherits="DoIKnowYouDataview_RowTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DataRow10" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-0" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="$parent_DataRow12" inherits="DoIKnowYouDataview_RowTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_DataRow11" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-0" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			
+		
+		</Frames>
+		
+		<Layers>
+			<Layer level="ARTWORK">
+			
+				<FontString name="$parent_TitleText" inherits="GameFontNormal" text="Do I Know You?">			
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="5" y="-5" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				
+				<FontString name="$parent_HeaderName" inherits="GameFontNormalSmall" text="Name">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
+							<Offset x="15" y="-45" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_HeaderNote" inherits="GameFontNormalSmall" text="Note">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
+							<Offset x="140" y="-45" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_HeaderRep" inherits="GameFontNormalSmall" text="Rep">
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="TOPLEFT">
+							<Offset x="410" y="-45" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_HeaderTotal" inherits="GameFontNormalSmall" text="Total">
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="TOPLEFT">
+							<Offset x="435" y="-35" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_HeaderSources" inherits="GameFontNormalSmall" text="Sources">
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="TOPLEFT">
+							<Offset x="460" y="-45" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_HeaderNotes" inherits="GameFontNormalSmall" text="Notes">
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="TOPLEFT">
+							<Offset x="485" y="-35" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_PageInfo" inherits="GameFontNormal" text="">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset x="20" y="76" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+						
+			</Layer>
+		</Layers>
+		
+	</Frame>
+	
+</Ui>

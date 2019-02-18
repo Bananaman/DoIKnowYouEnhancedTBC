@@ -1,0 +1,139 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+	
+	<Frame name="DoIKnowYouConsole" enableMouse="true" movable="true" resizable="false" clampedtoscreen="true" parent="UIParent" hidden="true" frameStrata="DIALOG">
+	
+		<Scripts>
+		<OnLoad>
+			self:SetBackdropBorderColor(0,0,0,1);
+			self:SetBackdropColor(0,0,0,1);
+		</OnLoad>
+		<OnMouseUp>
+			if ( this.isMoving ) then
+				self:StopMovingOrSizing();
+				this.isMoving = false;
+			end
+		</OnMouseUp>
+		<OnMouseDown>
+			if ( ( ( not this.isLocked ) or ( this.isLocked == 0 ) ) and ( arg1 == "LeftButton" ) ) then
+				self:StartMoving();
+				this.isMoving = true;
+			end
+		</OnMouseDown>
+		<OnHide>
+			if ( this.isMoving ) then
+				self:StopMovingOrSizing();
+				this.isMoving = false;
+			end
+		</OnHide>
+		</Scripts>
+		
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<TileSize>
+				<AbsValue val="32" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16" />
+			</EdgeSize>
+			<BackgroundInsets>
+				<AbsInset left="3" right="3" top="3" bottom="3" />
+			</BackgroundInsets>
+		</Backdrop>
+			
+		<Size>
+			<AbsDimension x="400" y="210"></AbsDimension>
+		</Size>
+		
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		
+		<Frames>
+		
+			<Button name="$parent_ConsoleCloseButton" inherits="UIPanelCloseButton">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-3" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick> self:GetParent():Hide();</OnClick>
+				</Scripts>
+			</Button>
+			
+			<ScrollFrame name="$parent_ConsoleScrollFrame" inherits="UIPanelScrollFrameTemplate">
+				<Size>
+					<AbsDimension x="330" y="160"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-30"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<ScrollChild>
+					<EditBox name="$parent_ConsoleEditBox" letters="10000" multiLine="true" autoFocus="false">
+						<Size>
+							<AbsDimension x="300" y="160"/>
+						</Size>
+						<Scripts>
+							<OnEscapePressed>
+								self:ClearFocus();
+							</OnEscapePressed>
+							<OnTextChanged>
+								local scrollBar = getglobal(self:GetParent():GetName().."ScrollBar")
+								local min;
+								local max;
+								min, max = scrollBar:GetMinMaxValues();
+								if ( max > 0 and (this.max ~= max) ) then
+								this.max = max;
+								scrollBar:SetValue(max);
+								end
+							</OnTextChanged>
+							<OnEditFocusGained>
+								self:ClearFocus();
+							</OnEditFocusGained>
+						</Scripts>
+						<FontString inherits="GameFontHighlight"/>
+					</EditBox>
+				</ScrollChild>
+			</ScrollFrame>
+			
+		</Frames>
+		
+		<Layers>
+			<Layer level="ARTWORK">
+			
+				<FontString name="$parent_TitleText" inherits="GameFontNormal" text="Do I Know You?">			
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="5" y="-5" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			
+				<Texture name="$parent_Consolebackground" file="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
+					<Size>
+						<AbsDimension x="335" y="170"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="15" y="-25" />
+						</Anchor>
+					</Anchors>
+				</Texture>
+			
+			</Layer>
+		</Layers>
+		
+	</Frame>
+	
+</Ui>

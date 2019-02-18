@@ -1,0 +1,10 @@
+------------------------------------------------------------------------
+r80182 | doktorjet | 2008-08-11 11:35:44 -0400 (Mon, 11 Aug 2008) | 2 lines
+Changed paths:
+   M /trunk/DoIKnowYou/DoIKnowYou.toc
+   A /trunk/DoIKnowYou/Locales/ruRU.lua
+   M /trunk/DoIKnowYou/Locales.xml
+
+DoIKnowYou: 
+- added ruRU locale. A little bit rough, but better then nothing.
+------------------------------------------------------------------------

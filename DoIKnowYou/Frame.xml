@@ -1,0 +1,412 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+	
+	<Frame name="DoIKnowYouFrame" enableMouse="true" movable="true" resizable="false" clampedtoscreen="true" parent="UIParent" hidden="true" frameStrata="HIGH">
+	
+		<Scripts>
+		<OnLoad>
+			self:SetBackdropBorderColor(0,0,0,1);
+			self:SetBackdropColor(0,0,0,1);
+		</OnLoad>
+		<OnMouseUp>
+			if ( this.isMoving ) then
+				self:StopMovingOrSizing();
+				this.isMoving = false;
+			end
+		</OnMouseUp>
+		<OnMouseDown>
+			if ( ( ( not this.isLocked ) or ( this.isLocked == 0 ) ) and ( arg1 == "LeftButton" ) ) then
+				self:StartMoving();
+				this.isMoving = true;
+			end
+		</OnMouseDown>
+		<OnHide>
+			if ( this.isMoving ) then
+				self:StopMovingOrSizing();
+				this.isMoving = false;
+			end
+		</OnHide>
+		</Scripts>
+		
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<TileSize>
+				<AbsValue val="32" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16" />
+			</EdgeSize>
+			<BackgroundInsets>
+				<AbsInset left="3" right="3" top="3" bottom="3" />
+			</BackgroundInsets>
+		</Backdrop>
+			
+		<Size>
+			<AbsDimension x="400" y="400"></AbsDimension>
+		</Size>
+		
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		
+		<Frames>
+		
+			<Button name="CloseButton" inherits="UIPanelCloseButton">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-3" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick> self:GetParent():Hide();</OnClick>
+				</Scripts>
+			</Button>
+			
+			
+			
+			<EditBox name="$parent_TargetEditBox" letters="80" autoFocus="false" inherits="InputBoxTemplate">
+				<Size>
+					<AbsDimension x="200" y="32"></AbsDimension>
+				</Size>
+				<Scripts>
+					<OnEscapePressed>
+						self:ClearFocus();
+					</OnEscapePressed>
+					<OnEnterPressed>
+						self:ClearFocus()
+						local name = self:GetText();
+						if(name~=nil) then
+							DoIKnowYou:runQueryOn(name);
+						end
+					</OnEnterPressed>
+				</Scripts>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<FontString inherits="ChatFontNormal" />
+				
+			</EditBox>
+						
+			<Button name="$parent_GetTargetButton" text="From Target" inherits="GameMenuButtonTemplate">
+				<Scripts>
+					<OnClick>
+						local targetname = UnitName("target");
+						if(targetname ~= nil) then
+							if UnitIsPlayer("target") then
+								DoIKnowYouFrame_TargetEditBox:SetText(targetname);
+								DoIKnowYou:runQueryOn(targetname)
+							else
+								DoIKnowYou:chatOut(" error: Target must be a player character.")
+							end
+						end
+					</OnClick>
+				</Scripts>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="230" y="-36" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			
+			<Button name="$parent_SyncButton" text="Sync Data" inherits="GameMenuButtonTemplate">
+				<Scripts>
+					<OnClick>
+						DoIKnowYou:sendRequestData("")
+					</OnClick>
+				</Scripts>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="230" y="-66" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			
+			<Button name="$parent_GlobalSyncButton" text="Global Sync" inherits="GameMenuButtonTemplate">
+				<Scripts>
+					<OnClick>
+						DoIKnowYou:sendRequestData("*ALL") -- requests all data from others
+						DoIKnowYou:RequestData("", "*ALL") -- sends own data as though I have received request
+					</OnClick>
+				</Scripts>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="230" y="-96" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			
+			<Button name="$parent_repUpButton" hidden="true">
+				<Size x="28" y="28" />
+				<Anchors>
+					<Anchor point="CENTER" relativePoint="TOPLEFT">
+						<Offset x="200" y="-93" />
+					</Anchor>
+				</Anchors>
+				<HitRectInsets>
+					<AbsInset left="6" right="6" top="7" bottom="7"/>
+				</HitRectInsets>
+				<NormalTexture file="Interface\MainMenuBar\UI-MainMenu-ScrollUpButton-Up"/>
+				<PushedTexture file="Interface\MainMenuBar\UI-MainMenu-ScrollUpButton-Down"/>
+				<DisabledTexture file="Interface\MainMenuBar\UI-MainMenu-ScrollUpButton-Disabled"/>
+				<HighlightTexture alphaMode="ADD" file="Interface\MainMenuBar\UI-MainMenu-ScrollUpButton-Highlight"/>
+				<Scripts>
+					<OnClick>
+						DoIKnowYou:repUp();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parent_repDownButton" hidden="true">
+				<Size x="28" y="28" />
+				<Anchors>
+					<Anchor point="CENTER" relativePoint="TOPLEFT">
+						<Offset x="200" y="-108" />
+					</Anchor>
+				</Anchors>
+				<HitRectInsets>
+					<AbsInset left="6" right="6" top="7" bottom="7"/>
+				</HitRectInsets>
+				<NormalTexture file="Interface\MainMenuBar\UI-MainMenu-ScrollDownButton-Up"/>
+				<PushedTexture file="Interface\MainMenuBar\UI-MainMenu-ScrollDownButton-Down"/>
+				<DisabledTexture file="Interface\MainMenuBar\UI-MainMenu-ScrollDownButton-Disabled"/>
+				<HighlightTexture alphaMode="ADD" file="Interface\MainMenuBar\UI-MainMenu-ScrollDownButton-Highlight"/>
+				<Scripts>
+					<OnClick>
+						DoIKnowYou:repDown();
+					</OnClick>
+				</Scripts>
+			</Button>
+			
+			<EditBox name="$parent_CommentEditBox" letters="200" autoFocus="false" inherits="InputBoxTemplate" hidden="true">
+				<Size>
+					<AbsDimension x="340" y="62"></AbsDimension>
+				</Size>
+				<Scripts>
+					<OnEscapePressed>
+						self:ClearFocus();
+					</OnEscapePressed>
+					<OnEnterPressed>
+						self:ClearFocus();
+					</OnEnterPressed>
+					<OnEditFocusLost>
+						DoIKnowYou:saveComment()
+					</OnEditFocusLost>
+				</Scripts>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-120" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<FontString inherits="ChatFontNormal" />
+				
+			</EditBox>
+			
+			<ScrollFrame name="$parent_DataScrollFrame" inherits="UIPanelScrollFrameTemplate">
+				<Size>
+					<AbsDimension x="340" y="130"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-220"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<ScrollChild>
+					<EditBox name="$parent_DataEditBox" letters="10000" multiLine="true" autoFocus="false">
+						<Size>
+							<AbsDimension x="310" y="130"/>
+						</Size>
+						<Scripts>
+							<OnEscapePressed>
+								self:ClearFocus();
+							</OnEscapePressed>
+							<OnTextChanged>
+								local scrollBar = getglobal(self:GetParent():GetName().."ScrollBar")
+								local min;
+								local max;
+								min, max = scrollBar:GetMinMaxValues();
+								if ( max > 0 and (this.max ~= max) ) then
+								this.max = max;
+								scrollBar:SetValue(max);
+								end
+							</OnTextChanged>
+							<OnEditFocusGained>
+								self:ClearFocus();
+							</OnEditFocusGained>
+						</Scripts>
+						<FontString inherits="GameFontHighlight"/>
+					</EditBox>
+				</ScrollChild>
+			</ScrollFrame>
+			
+			<Button name="$parent_ShowOptionsButton" text="Options" inherits="GameMenuButtonTemplate">
+				<Scripts>
+					<OnClick>
+						LibStub("AceConfigDialog-3.0"):Open("DoIKnowYou")
+					</OnClick>
+				</Scripts>
+				<Size>
+					<AbsDimension x="80" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-10" y="10" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parent_ShowConsoleButton" text="Console" inherits="GameMenuButtonTemplate">
+				<Scripts>
+					<OnClick>
+						local f = getglobal("DoIKnowYouConsole")
+						if(f:IsVisible()) then
+							f:Hide()
+						else
+							f:Show()
+						end
+					</OnClick>
+				</Scripts>
+				<Size>
+					<AbsDimension x="80" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-90" y="10" />
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parent_ShowDataviewButton" text="Data View" inherits="GameMenuButtonTemplate">
+				<Scripts>
+					<OnClick>
+						local f = getglobal("DoIKnowYouDataview")
+						if(f:IsVisible()) then
+							f:Hide()
+						else
+							f:Show()
+						end
+					</OnClick>
+				</Scripts>
+				<Size>
+					<AbsDimension x="80" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-170" y="10" />
+					</Anchor>
+				</Anchors>
+			</Button>
+					
+		</Frames>
+		
+		<Layers>
+			<Layer level="ARTWORK">
+				
+				<FontString name="$parent_TitleText2" font="Fonts\FRIZQT__.TTF" text="|cff00ff00D|cff18ff00o |cff30ff00I|cff48ff00 K|cff60ff00n|cff78ff00o|cff90ff00w|cffa8ff00 Y|cffc0ff00o|cffd8ff00u|cffffff00?" outline="NORMAL">			
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="5" y="22" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="30" />
+					</FontHeight>
+				</FontString>
+				
+				<FontString name="$parent_EditBoxPromptText" inherits="GameFontNormalSmall" text="Input the name of the player">			
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="20" y="-18" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				
+				<FontString name="$parent_QueryHeader" inherits="GameFontNormalSmall" text="" JustifyH="CENTER">			
+					<Anchors>
+						<Anchor point="CENTER" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="100" y="-70" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_QueryStatus" inherits="GameFontNormal" text="" JustifyH="CENTER" outline="NORMAL">
+					<Anchors>
+						<Anchor point="CENTER" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="100" y="-100" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				
+				<FontString name="$parent_CommentBoxText" inherits="GameFontNormalSmall" text="Player comment:" hidden="true">			
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="20" y="-125" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				
+				<FontString name="$parent_SharedDataText" inherits="GameFontNormalSmall" text="Shared data:" hidden="true">			
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="20" y="-170" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_SharedDataStatus" inherits="GameFontNormal" text="" JustifyH="CENTER" outline="NORMAL">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="220" y="-170" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parent_SharedDataInfo" inherits="GameFontNormalSmall" text="" JustifyH="CENTER">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="20" y="-190" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				
+				<Texture name="$parent_Databackground" file="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
+					<Size>
+						<AbsDimension x="345" y="140"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="15" y="-215" />
+						</Anchor>
+					</Anchors>
+					
+				</Texture>
+				
+				
+				
+			</Layer>
+		</Layers>	
+	
+	</Frame>
+	
+</Ui>
