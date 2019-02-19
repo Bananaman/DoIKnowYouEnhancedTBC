@@ -10,6 +10,7 @@ This is an enhanced, bugfixed version of **DoIKnowYou** for The Burning Crusade!
 
 - You will no longer get disconnected whenever the addon attempts to sync lots of data.
 - The addon is now capable of syncing long player notes/comments. (The official version always lost tons of data whenever it attempted to sync long notes.)
+- No more Lua errors if you log into a guildless player or leave a guild.
 
 **Download: [DoIKnowYouEnhancedTBC-master.zip](https://github.com/VideoPlayerCode/DoIKnowYouEnhancedTBC/archive/master.zip)** (Put the inner "DoIKnowYou" folder into your WoW's "Interface/AddOns" folder.)
 
