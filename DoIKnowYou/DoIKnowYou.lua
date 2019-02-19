@@ -1103,7 +1103,7 @@ local function eventHandler( ... )
 					for i2, v2 in pairs(v1) do
 						if(type(v2)=="table") then
 							if(i2~=DoIKnowYou.db.realm.primaryChar) then
-								if(v2.source==DIKY_SOURCE["GUILD"] and not #DoIKnowYou.db.realm.guilds[v2.guild]>0 and DoIKnowYou.db.profile.purgeGuildData) then
+								if(v2.source==DIKY_SOURCE["GUILD"] and #DoIKnowYou.db.realm.guilds[v2.guild]<=0 and DoIKnowYou.db.profile.purgeGuildData) then
 									DoIKnowYou:chatOut(format(L["You have left %s, no characters left in guild - purging data."], playerguild))
 									updateNeeded = true
 									DoIKnowYou.db.realm.data[i1][i2] = nil
