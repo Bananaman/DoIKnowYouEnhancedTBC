@@ -10,6 +10,8 @@ local commprefix = "DoIKnowYou" .. tostring(VERSION_COMM)
 local versionCheckPrefix = "DoIKnowYouVersionCheck"
 local namestring = "|cff00ff00D|cff18ff00o|cff30ff00I|cff48ff00K|cff60ff00n|cff78ff00o|cff90ff00w|cffa8ff00Y|cffc0ff00o|cffd8ff00u|r"
 
+local CTL = assert(ChatThrottleLib, "DoIKnowYou requires ChatThrottleLib.")
+
 local playername, playerguild
 local addonEnabled = false
 local chatOutBuffer = {}
@@ -380,8 +382,26 @@ end
 local function addonMsgSend(text)
 	if(DoIKnowYou.db.profile.sendComms) then
 		if(IsInGuild()) then
-			SendAddonMessage("DoIKnowYou", tostring(VERSION_COMM) .. ":" .. text, "GUILD");
-			DoIKnowYou:debugOut("Sent: " .. tostring(text))
+			local finalText = tostring(VERSION_COMM) .. ":" .. text
+			local finalLen = finalText:len() + 11 -- 11 = prefix ("DoIKnowYou") + 1 (separator)
+
+			-- Enforce length limit. Max data length allowed by the WoW API: 255 bytes. One more (256) would fail to send!
+			-- The prefix is 11 characters, which means the final payload data length allowed is 244 characters. Total: 255.
+			-- NOTE ABOUT THIS BUGFIX: DoIKnowYou wasn't programmed to properly handle long messages; however, the only kind
+			-- of payload that may exceed 255 bytes is long comments. So we'll simply chop off the end of the note cleanly.
+			-- As follows: "End of a really long message." -> "End of a [...]".
+			-- It's a decent solution for this old addon, without breaking backwards compatibility (ie. by doing multi-chunked sending).
+			if(finalLen > 255) then
+				DoIKnowYou:debugOut("Truncating (Was Over 255 Bytes): " .. finalText)
+				finalText = finalText:sub(1, 238) .. ' [...]'; -- Indicate truncation. 238 + 6 (trunc chars) = 244 chars. Max allowed!
+				finalLen = finalText:len() + 11
+				DoIKnowYou:debugOut("Shortened To: " .. finalText)
+			end
+
+			-- Blizzard only allows sending 2 messages at a time, before they throttle/disconnect you. So we'll use ChatThrottleLib.
+			-- NOTE: Priority "BULK" means sending with low priority, and prefix "DoIKnowYou" is required by Blizzard's API for message sorting.
+			CTL:SendAddonMessage("BULK", "DoIKnowYou", finalText, "GUILD")
+			DoIKnowYou:debugOut("Sent: " .. tostring(finalText))
 		end
 	end
 end
