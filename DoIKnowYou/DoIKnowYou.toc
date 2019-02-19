@@ -1,14 +1,14 @@
-﻿## Title: DoIKnowYou
+﻿## Title: DoIKnowYou Enhanced (TBC)
 ## Title-ruRU: АЯТебяЗнаю
 ## Notes: Note + rep tracking for players, with guild data sharing.
 ## Notes-ruRU: Заметки и отслеживание репутации (кармы) игроков, с разделением данных внутри гильдии.
-## Author: Shot
+## Author: Shot and VideoPlayerCode (Enhanced)
 ## X-eMail: shotmonkey@gmail.com
 
 ## Interface: 20400
 ## Version: 1.0
 
-## X-Website: http://www.wowace.com/wiki/DoIKnowYou
+## X-Website: https://github.com/VideoPlayerCode/DoIKnowYouEnhancedTBC
 ## X-Category: Interface Enhancements
 
 ## SavedVariables: DoIKnowYouDB
