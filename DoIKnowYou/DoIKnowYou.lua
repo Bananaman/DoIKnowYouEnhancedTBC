@@ -583,7 +583,7 @@ function DoIKnowYou:updateSharedNotes()
 	for index, value in pairs(self.db.realm.data[activeQuery]) do
 		if(type(value)=="table") then
 			if(value.note~="" and index~=self.db.realm.primaryChar) then
-				dText = dText .. self:getRepColor(value.rep) .. "\"" .. value.note .. "\"" .. "|r\n"
+				dText = dText .. index .. ": " .. self:getRepColor(value.rep) .. "\"" .. value.note .. "\"" .. "|r\n"
 				tcount = tcount + 1;
 			end
 		end
