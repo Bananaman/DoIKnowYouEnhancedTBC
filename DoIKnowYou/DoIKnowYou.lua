@@ -646,10 +646,16 @@ function DoIKnowYou:countSources(name)
 	self.db.realm.data[name].notes = ncount
 end
 
+function DoIKnowYou:cleanNote(note)
+	-- Trim leading and trailing whitespace from the note.
+	return string.trim(note)
+end
+
 function DoIKnowYou:saveComment()
 	local note = DoIKnowYouFrame_CommentEditBox:GetText()
+	note = self:cleanNote(note)
 	self.db.realm.data[activeQuery][self.db.realm.primaryChar].note = note
-	self:consoleOut(format(L["Note for %s saved as %s"], activeQuery, note))
+	self:consoleOut(format(L["Note for %s saved as \"%s\""], activeQuery, note))
 	self:updateSharedNotes()
 	self:countSources(activeQuery)
 	self:updateTotalRep(activeQuery)
@@ -657,7 +663,8 @@ function DoIKnowYou:saveComment()
 end
 
 function DoIKnowYou:saveCommentAbs(name, note)
-	self:debugOut("Saving note for " .. tostring(name) .. " as " .. tostring(note) .. " (" .. tostring(self.db.realm.primaryChar) .. ")")
+	note = self:cleanNote(note)
+	self:debugOut("Saving note for " .. tostring(name) .. " as \"" .. tostring(note) .. "\" (" .. tostring(self.db.realm.primaryChar) .. ")")
 	if(not self.db.realm.data[name]) then self.db.realm.data[name] = {total=0, sources=0, notes=0}	end
 	if(not self.db.realm.data[name][self.db.realm.primaryChar]) then self.db.realm.data[name][self.db.realm.primaryChar] = {rep=0, note=""} end
 	self.db.realm.data[name][self.db.realm.primaryChar].note = note
@@ -752,7 +759,7 @@ function DoIKnowYou:ReceiveData(sender, data, source)
 	if(d.note ~= nil and d.from~=self.db.realm.primaryChar) then -- got all parts and not mine
 		if not self.db.realm.data[d.subject] then self.db.realm.data[d.subject] = {total=0, sources=0, notes=0}; end
 		if(not self.db.realm.data[d.subject][d.from] or tonumber(d.creation) > self.db.realm.data[d.subject][d.from].creation) then
-			self.db.realm.data[d.subject][d.from] = {rep=tonumber(d.rep), note=(d.note or ""), creation=tonumber(d.creation), ttl=time()+dataTTL}
+			self.db.realm.data[d.subject][d.from] = {rep=tonumber(d.rep), note=(d.note and self:cleanNote(d.note) or ""), creation=tonumber(d.creation), ttl=time()+dataTTL}
 			self.db.realm.data[d.subject][d.from].source = DIKY_SOURCE[source]
 			if(source=="GUILD") then
 				self.db.realm.data[d.subject][d.from].guild = playerguild
