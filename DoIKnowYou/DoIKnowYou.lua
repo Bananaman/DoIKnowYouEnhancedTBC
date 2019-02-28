@@ -53,13 +53,13 @@ local defaultData = {
 	},
 	profile = {
 		showRepTooltip = true,
-		hideRepNeutral = true,
+		hideRepNeutral = false,
 		showRepPrefix = true,
 		showRepPrefixText = "DoIKnowYou: ",
 		colourRep = true,
 		
 		showCommentTooltip = true,
-		hideCommentNeutral = true,
+		hideCommentNeutral = false,
 		showCommentPrefix = false,
 		showCommentPrefixText = "",
 		colourComment = true,
