@@ -21,6 +21,7 @@ L["Hide comment tooltip when neutral"] 								= "隱藏提示框的中性評論
 L["Show prefix:"] 													= "顯示標題"
 L["Prefix text:"] 													= "標題文字"
 L["Colour comment text by reputation"] 								= "評論顏色以相應的信譽值著色"
+L["Trusted tooltip comment authors to check when no personal comment exists (separated by commas):"] = true
 
 L["Auto Query"] 													= "自動查詢"
 L["Options for automatic queries"] 									= "自動查詢設定"
@@ -65,7 +66,7 @@ L["Data generated from %s sources."] 								= "數據由 %s 來源所產生." -
 L["running query on %s"] 											= "向 %s 作查詢" -- player
 L["Query on: %s"] 													= "查詢: %s" -- player name
 L["No notes received from shared data sources."] 					= "沒有從共享數據源收到記事"
-L["Note for %s saved as %s"] 										= "%s 的記事經已儲存為 %s" -- player name, note
+L["Note for %s saved as \"%s\""]									= "%s 的記事經已儲存為 \"%s\"" -- player name, note
 L["Rep changed for %s to %d"] 										= "%s 的信譽值改為 %d" -- player name, rep (-1, 0 or 1)
 
 L["Input the name of the player"] 									= "請輸入玩家的名稱"

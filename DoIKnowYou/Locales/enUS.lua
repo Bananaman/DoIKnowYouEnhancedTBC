@@ -20,6 +20,7 @@ L["Hide comment tooltip when neutral"] = true
 L["Show prefix:"] = true
 L["Prefix text:"] = true
 L["Colour comment text by reputation"] = true
+L["Trusted tooltip comment authors to check when no personal comment exists (separated by commas):"] = true
 
 L["Auto Query"] = true
 L["Options for automatic queries"] = true
@@ -64,7 +65,7 @@ L["Data generated from %s sources."] = true -- number of data source
 L["running query on %s"] = true -- player
 L["Query on: %s"] = true -- player name
 L["No notes received from shared data sources."] = true
-L["Note for %s saved as %s"] = true -- player name, note
+L["Note for %s saved as \"%s\""] = true -- player name, note
 L["Rep changed for %s to %d"] = true -- player name, rep (-1, 0 or 1)
 
 L["Input the name of the player"] = true

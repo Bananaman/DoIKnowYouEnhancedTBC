@@ -20,6 +20,7 @@ L["Hide comment tooltip when neutral"] = "Спрятать комментари�
 L["Show prefix:"] = "Показать префикс:"
 L["Prefix text:"] = "Текст префикса:"
 L["Colour comment text by reputation"] = "Подцвечивать текст комментариев соответственно репутации"
+L["Trusted tooltip comment authors to check when no personal comment exists (separated by commas):"] = true
 
 L["Auto Query"] = "Автозапрос"
 L["Options for automatic queries"] = "Настройки автоматических запросов"
@@ -64,7 +65,7 @@ L["Data generated from %s sources."] = "Данные собраны с %s ист
 L["running query on %s"] = "обрабатывается запрос на %s" -- player
 L["Query on: %s"] = "Запрос на: %s" -- player name
 L["No notes received from shared data sources."] = "От разделяемых источников данных не получено никаких заметок."
-L["Note for %s saved as %s"] = "Заметьте, что %s записан(а) как %s" -- player name, note
+L["Note for %s saved as \"%s\""] = "Заметьте, что %s записан(а) как \"%s\"" -- player name, note
 L["Rep changed for %s to %d"] = "Репутация %s изменилась на %d" -- player name, rep (-1, 0 or 1)
 
 L["Input the name of the player"] = "Введите имя игрока"
