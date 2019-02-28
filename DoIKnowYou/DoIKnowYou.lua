@@ -63,6 +63,7 @@ local defaultData = {
 		showCommentPrefix = false,
 		showCommentPrefixText = "",
 		colourComment = true,
+		trustedCommentAuthors = {"Trustedauthornames", "Inthislist"},
 		
 		useDropDown = true,
 		
@@ -95,8 +96,8 @@ local optionsTable = {
 	type = "group",
 	name = L["DoIKnowYou"],
 	desc = L["Options for DoIKnowYou!"],
-	get = function(k) return DoIKnowYou.db.profile[k.arg] end,
-	set = function(k, v) DoIKnowYou.db.profile[k.arg] = v end,
+	get = function(info) return DoIKnowYou.db.profile[info.arg] end,
+	set = function(info, val) DoIKnowYou.db.profile[info.arg] = val end,
 	childGroups = "tab",
 	args = {
 		group_tooltip = {
@@ -181,6 +182,32 @@ local optionsTable = {
 					width = "full",
 					order = 10,
 					disabled = function() return not DoIKnowYou.db.profile.showCommentTooltip; end,
+				},
+				trustedCommentAuthors = {
+					type = "input",
+					name = L["Trusted tooltip comment authors to check when no personal comment exists (separated by commas):"],
+					arg = "trustedCommentAuthors",
+					width = "full",
+					order = 11,
+					disabled = function() return not DoIKnowYou.db.profile.showCommentTooltip; end,
+					get = function(info) return table.concat(DoIKnowYou.db.profile[info.arg], ",") end,
+					set = function(info, val)
+						-- We cannot trust the user's input. Player names are VERY CASE SENSITIVE. So we'll split by commas and clean up their names!
+						local trustedAuthors = {}
+						if (type(val) == "string") then
+							for name in val:gmatch("([^,]+)") do
+								-- Remove ALL whitespace (spaces, tabs, etc) everywhere in the string.
+								name = name:gsub("%s+", "")
+								if (name:len() > 0) then -- Only proceed with non-empty names.
+									-- Uppercase the first letter, and lowercase all other letters. Ensures the name matches perfectly.
+									-- NOTE: Doesn't work properly on Unicode! But The Burning Crusade client doesn't allow Unicode names! ;-)
+									name = name:sub(1,1):upper() .. name:sub(2):lower()
+									trustedAuthors[#trustedAuthors+1] = name
+								end
+							end
+						end
+						DoIKnowYou.db.profile[info.arg] = trustedAuthors
+					end,
 				},
 			}
 		},
@@ -463,13 +490,22 @@ function DoIKnowYou:getRepStatusText(unit)
 	end
 	return L["Neutral"]
 end
-function DoIKnowYou:getPlayerNote(unit)
+function DoIKnowYou:getPlayerNote(unit, useTrustedAuthors)
 	local name, server = UnitName(unit)
 	name = strupper(name)
 	if self.db.realm.data[name] then
+		-- First check for a note written by ourselves (our primary character on the account).
 		if(self.db.realm.data[name][self.db.realm.primaryChar]) then
 			if(self.db.realm.data[name][self.db.realm.primaryChar].note~=nil and self.db.realm.data[name][self.db.realm.primaryChar].note~="") then
 				return self.db.realm.data[name][self.db.realm.primaryChar].note
+			end
+		end
+		-- Next, fall back to comments by "trusted authors" (if any exist). Format them differently, as "Name says: ...".
+		if(useTrustedAuthors) then
+			for _,author in ipairs(self.db.profile.trustedCommentAuthors) do
+				if(self.db.realm.data[name][author] and self.db.realm.data[name][author].note~=nil and self.db.realm.data[name][author].note~="") then
+					return author.." says: \""..self.db.realm.data[name][author].note.."\""
+				end
 			end
 		end
 	end
@@ -1187,8 +1223,11 @@ local function formatTooltip(tooltip, ...)
 			end
 			if(DoIKnowYou.db.profile.showCommentTooltip) then
 			
+				-- NOTE: We only show ONE comment, even if multiple trusted notes
+				-- exist. That's because the WoW tooltip has a VERY restrictive
+				-- line-count limit which could easily break if we add too many lines.
 				local rep = DoIKnowYou:getRepStatus(unitid)
-				local note = DoIKnowYou:getPlayerNote(unitid)
+				local note = DoIKnowYou:getPlayerNote(unitid, true) -- true = Allow fallback notes by trusted authors.
 				if(note~=nil and not (DoIKnowYou.db.profile.hideCommentNeutral and rep==0)) then
 					local tstring = "";
 					if(DoIKnowYou.db.profile.showCommentPrefix) then tstring = DoIKnowYou.db.profile.showCommentPrefixText end
