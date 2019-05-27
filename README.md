@@ -1,6 +1,6 @@
 # DoIKnowYou (Enhanced) for The Burning Crusade
 
-This is an enhanced, bugfixed version of **DoIKnowYou** for The Burning Crusade! (TBC 2.4.6)
+This is an enhanced, bugfixed version of **DoIKnowYou** for The Burning Crusade! (TBC 2.4.3)
 
 **Enhancements:**
 
